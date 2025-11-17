@@ -258,9 +258,8 @@ fence-staining-visualizer/
 ### Improvement Roadmap
 - [ ] Expand dataset to 15,000+ images
 - [ ] Add instance segmentation (detect individual fence panels)
-- [ ] Support for chain-link and wire fences
-- [ ] Multi-material detection (wood, vinyl, metal)
-- [ ] Real-time video processing
+- [ ] Accurate edge detection
+- [ ] Improve background separation and obstacles separation
 
 ---
 
@@ -271,7 +270,6 @@ This application is designed with privacy as a priority:
 -  **No Server Communication**: All processing happens in your browser
 -  **No Data Storage**: Images are never saved or cached
 -  **No Analytics**: No tracking or user behavior monitoring
--  **Open Source**: Fully auditable code
 -  **Offline Capable**: Works without internet (after model loads)
 
 ---
