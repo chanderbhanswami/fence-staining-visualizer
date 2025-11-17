@@ -9,7 +9,7 @@
 
 **Transform fence visualization with AI-powered semantic segmentation**
 
-A production-ready web application that uses deep learning (UNet++ architecture) to automatically detect fences in photos and apply realistic color transformations. Perfect for fence staining businesses, property visualization, and home improvement planning.
+A production-ready web application that uses deep learning (UNet++ architecture) to automatically detect fences in photos and apply realistic color transformations.
 
 ---
 
@@ -55,7 +55,8 @@ The AI model identifies fence structures with pixel-level precision, even handli
 
 ### Professional Controls
 - **Detection Threshold**: Fine-tune sensitivity (0.1-0.9)
-- **Color Picker**: Unlimited stain color options
+- **Custom Color Picker**: 20 predefined professional stain colors (Cedar, Mahogany, Walnut, Oak, Cherry, Pine, Redwood, Espresso, Driftwood, Hickory, Chestnut, Teak, Ebony, Maple, Natural, Gray, Charcoal, White Oak, Rustic, Slate)
+- **Modal Color Selection**: Elegant popup dialog for color selection without layout shifts
 - **High-Quality Output**: Download results in PNG format
 - **Responsive Design**: Works on desktop, tablet, and mobile
 
@@ -64,6 +65,89 @@ The AI model identifies fence structures with pixel-level precision, even handli
 - **Offline Capable**: Works after initial model load
 - **No Data Collection**: Your images never leave your device
 - **Fast Processing**: GPU-accelerated when available
+
+---
+
+## UI/UX Features
+
+### Modern & Intuitive Interface
+- **Brand-Specific Color Theme**: Custom orange (#C06B1A) and black gradient design
+- **Animated Gradient Background**: Dynamic shifting background with floating effects
+- **Smooth Animations**: Fade-in, slide-in, and hover effects throughout
+- **Professional Typography**: Inter font family for clean, modern look
+
+### Responsive & Device-Friendly
+- **Fully Responsive**: Optimized layouts for desktop, tablet, and mobile devices
+- **Touch-Friendly**: Large tap targets and mobile-optimized controls
+- **Adaptive Grid**: Control panels automatically adjust to screen size
+- **Mobile-First Design**: Works seamlessly on smartphones and tablets
+
+### Advanced Upload System
+- **Drag & Drop**: Simply drag images directly into the upload area
+- **Click to Upload**: Traditional file picker for easy access
+- **Multiple Format Support**: JPG, PNG, WebP images accepted
+- **File Size Limit**: Up to 10MB per image
+- **Visual Upload States**: Hover and drag-over animations for feedback
+- **Upload Icons**: Bootstrap Icons for clear visual communication
+
+### Custom Color Picker
+- **Modal Dialog**: Beautiful popup with backdrop blur effect
+- **20 Professional Colors**: Curated wood stain colors with names
+- **5-Column Grid Layout**: Easy browsing and selection
+- **Visual Feedback**: Selected color marked with checkmark
+- **Color Preview**: Live preview of selected color with name display
+- **Click Outside to Close**: Intuitive modal interaction
+- **Smooth Animations**: Hover effects and transitions on all color swatches
+
+### Blend Modes & Effects
+- **4 Blend Modes**: Normal, Multiply (Realistic), Overlay, Screen
+- **Opacity Slider**: 0-100% with real-time value display
+- **Edge Smoothing**: 5 levels for natural fence transitions
+- **Detection Threshold**: Fine-tune AI sensitivity
+
+### Interactive Canvas System
+- **Triple Canvas Display**: Original, Detection Mask, and Recolored Result
+- **Hover Effects**: Elevation and border highlights on hover
+- **Auto-Sizing**: Canvases adapt to uploaded image dimensions
+- **High-Quality Rendering**: Smooth edges and clear details
+- **Grid Layout**: Responsive canvas arrangement
+
+### Loading & Feedback
+- **Full-Screen Loading Overlay**: Beautiful backdrop blur with spinner
+- **Contextual Loading Messages**: "Detecting fence...", "Recoloring fence...", "Preparing download...", "Resetting..."
+- **Status Indicators**: Color-coded messages (loading/warning, success, error)
+- **Inline Model Loader**: Separate animation for initial model loading
+- **Smooth Transitions**: Fade-in/out animations for all status changes
+
+### Action Buttons
+- **Detect Fence**: Triggers AI segmentation with loading animation
+- **Recolor Fence**: Applies selected color with blend mode
+- **Download Result**: One-click PNG download
+- **Reset**: Clear all canvases and start fresh
+- **Smart Enabling**: Buttons enable/disable based on workflow state
+- **Icon Integration**: Bootstrap Icons for visual clarity
+- **Hover States**: Color transitions and elevation effects
+
+### Information & Help
+- **How to Use Panel**: Step-by-step instructions with checkmarks
+- **File Format Info**: Supported formats and size limits displayed
+- **Visual Icons**: Bootstrap Icons throughout for better UX
+- **Tooltips**: Color names on hover in color picker
+- **Gradient Borders**: Brand-colored accents on info boxes
+
+### Brand Identity
+- **Ninja Logo**: High-quality logo with hover animations
+- **Custom Orange Theme**: #C06B1A brand color throughout
+- **Gradient Effects**: Orange to black gradients in headers and buttons
+- **Professional Shadows**: Multi-layer shadows for depth
+- **Rounded Corners**: Modern 8-32px border radius design
+
+### Performance Optimizations
+- **No Layout Shifts**: Modal dialogs prevent content jumping
+- **GPU Acceleration**: CSS transforms for smooth animations
+- **Optimized Images**: WebP logo for faster loading
+- **Lazy Rendering**: Canvases only render when needed
+- **Efficient DOM Updates**: Minimal reflows and repaints
 
 ---
 

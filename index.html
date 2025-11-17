@@ -355,6 +355,146 @@
             letter-spacing: -0.01em;
         }
 
+        /* Custom Color Picker Button */
+        .color-picker-button {
+            width: 100%;
+            height: 56px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .color-picker-button:hover {
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        .current-color-display {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Color Picker Modal */
+        .color-picker-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(4px);
+        }
+
+        .color-picker-modal.active {
+            display: flex;
+        }
+
+        .color-picker-dialog {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .color-picker-dialog h3 {
+            margin: 0 0 24px 0;
+            color: var(--dark);
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .color-picker-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 2em;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.3s;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .color-picker-close:hover {
+            background: #f1f5f9;
+            color: var(--error);
+            transform: rotate(90deg);
+        }
+
+        .color-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .color-option {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+        }
+
+        .color-option.selected {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(192, 107, 26, 0.5);
+        }
+
+        .color-option.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .color-option-name {
+            text-align: center;
+            font-size: 0.8em;
+            color: #64748b;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
         input[type="range"] {
             width: 100%;
             margin-top: 8px;
@@ -751,6 +891,15 @@
         </div>
     </div>
 
+    <!-- Color Picker Modal -->
+    <div class="color-picker-modal" id="color-picker-modal">
+        <div class="color-picker-dialog">
+            <button class="color-picker-close" id="color-picker-close">&times;</button>
+            <h3><i class="bi bi-palette-fill"></i> Choose Your Stain Color</h3>
+            <div class="color-picker-grid" id="color-picker-grid"></div>
+        </div>
+    </div>
+
     <div class="header">
         <h1><img src="ninja_logo_light.png.webp" alt="Ninja Fence Staining Logo" class="logo">Ninja Fence Visualizer</h1>
         <p class="subtitle"><i class="bi bi-robot"></i> AI-Powered Fence Detection & Recoloring</p>
@@ -778,9 +927,12 @@
             <div class="control-group">
                 <label>
                     Fence Color
-                    <span class="value-display" id="color-preview" style="background: #8B4513; padding: 2px 10px; border-radius: 4px; color: white;">#8B4513</span>
+                    <span class="value-display" id="color-name-display">Cedar</span>
                 </label>
-                <input type="color" id="color-picker" value="#8B4513">
+                <button class="color-picker-button" id="color-picker-button">
+                    <span>Choose Color</span>
+                    <div class="current-color-display" id="current-color-display" style="background: #8B4513;"></div>
+                </button>
             </div>
             <div class="control-group">
                 <label>Blend Mode</label>
@@ -882,7 +1034,12 @@
         const originalCanvas = document.getElementById('original-canvas');
         const maskCanvas = document.getElementById('mask-canvas');
         const resultCanvas = document.getElementById('result-canvas');
-        const colorPicker = document.getElementById('color-picker');
+        const colorPickerButton = document.getElementById('color-picker-button');
+        const colorPickerModal = document.getElementById('color-picker-modal');
+        const colorPickerClose = document.getElementById('color-picker-close');
+        const colorPickerGrid = document.getElementById('color-picker-grid');
+        const currentColorDisplay = document.getElementById('current-color-display');
+        const colorNameDisplay = document.getElementById('color-name-display');
         const blendMode = document.getElementById('blend-mode');
         const opacity = document.getElementById('opacity');
         const threshold = document.getElementById('threshold');
@@ -897,6 +1054,33 @@
         const downloadBtn = document.getElementById('download-btn');
         const resetBtn = document.getElementById('reset-btn');
 
+        // Predefined Ninja Staining Colors
+        const ninjaColors = [
+            { name: 'Cedar', color: '#8B4513' },
+            { name: 'Mahogany', color: '#7B3F3F' },
+            { name: 'Walnut', color: '#6B4226' },
+            { name: 'Oak', color: '#A0826D' },
+            { name: 'Cherry', color: '#9B4444' },
+            { name: 'Pine', color: '#C19A6B' },
+            { name: 'Redwood', color: '#A45A52' },
+            { name: 'Espresso', color: '#5C4033' },
+            { name: 'Driftwood', color: '#9B8B7E' },
+            { name: 'Hickory', color: '#8D6346' },
+            { name: 'Chestnut', color: '#954535' },
+            { name: 'Teak', color: '#B8860B' },
+            { name: 'Ebony', color: '#3D3635' },
+            { name: 'Maple', color: '#D4A574' },
+            { name: 'Natural', color: '#C9A882' },
+            { name: 'Gray', color: '#707070' },
+            { name: 'Charcoal', color: '#4A4A4A' },
+            { name: 'White Oak', color: '#E8D5C4' },
+            { name: 'Rustic', color: '#8B6F47' },
+            { name: 'Slate', color: '#5F6A6A' }
+        ];
+
+        let selectedColor = '#8B4513'; // Default color
+        let selectedColorName = 'Cedar'; // Default color name
+
         // Helper functions for loading overlay
         function showLoading(message) {
             loadingText.textContent = message;
@@ -906,6 +1090,69 @@
         function hideLoading() {
             loadingOverlay.classList.remove('active');
         }
+
+        // Initialize custom color picker
+        function initColorPicker() {
+            ninjaColors.forEach((item, index) => {
+                const colorWrapper = document.createElement('div');
+                
+                const colorDiv = document.createElement('div');
+                colorDiv.className = 'color-option';
+                colorDiv.style.backgroundColor = item.color;
+                colorDiv.title = item.name;
+                
+                if (item.color === selectedColor) {
+                    colorDiv.classList.add('selected');
+                }
+                
+                colorDiv.addEventListener('click', () => {
+                    // Remove selected class from all options
+                    document.querySelectorAll('.color-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to clicked option
+                    colorDiv.classList.add('selected');
+                    
+                    // Update selected color
+                    selectedColor = item.color;
+                    selectedColorName = item.name;
+                    
+                    // Update color display
+                    currentColorDisplay.style.backgroundColor = item.color;
+                    colorNameDisplay.textContent = item.name;
+                    
+                    // Close modal
+                    colorPickerModal.classList.remove('active');
+                });
+                
+                colorWrapper.appendChild(colorDiv);
+                
+                const colorName = document.createElement('div');
+                colorName.className = 'color-option-name';
+                colorName.textContent = item.name;
+                colorWrapper.appendChild(colorName);
+                
+                colorPickerGrid.appendChild(colorWrapper);
+            });
+        }
+
+        // Open color picker modal
+        colorPickerButton.addEventListener('click', () => {
+            colorPickerModal.classList.add('active');
+        });
+
+        // Close color picker modal
+        colorPickerClose.addEventListener('click', () => {
+            colorPickerModal.classList.remove('active');
+        });
+
+        // Close modal when clicking outside
+        colorPickerModal.addEventListener('click', (e) => {
+            if (e.target === colorPickerModal) {
+                colorPickerModal.classList.remove('active');
+            }
+        });
 
         // ============================================================================
         // INITIALIZE
@@ -968,11 +1215,6 @@
         edgeSmoothing.addEventListener('input', () => {
             const labels = ['None', 'Light', 'Medium', 'Strong', 'Maximum'];
             document.getElementById('smoothing-value').textContent = labels[edgeSmoothing.value - 1];
-        });
-        
-        colorPicker.addEventListener('input', () => {
-            document.getElementById('color-preview').textContent = colorPicker.value;
-            document.getElementById('color-preview').style.background = colorPicker.value;
         });
         
         // Drag and drop
@@ -1411,7 +1653,7 @@
                 const imageData = ctx.getImageData(0, 0, originalImage.width, originalImage.height);
                 const data = imageData.data;
                 
-                const rgb = hexToRgb(colorPicker.value);
+                const rgb = hexToRgb(selectedColor);
                 const alpha = parseInt(opacity.value) / 100;
                 const mode = blendMode.value;
                 
@@ -1546,7 +1788,10 @@
         // ============================================================================
         // INITIALIZE ON LOAD
         // ============================================================================
-        window.addEventListener('load', init);
+        window.addEventListener('load', () => {
+            init();
+            initColorPicker();
+        });
     </script>
     </div> <!-- Close main-content -->
 </body>
