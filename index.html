@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ninja Fence Staining - UNet++ Fence Detector</title>
+    <title>Ninja Fence Staining - AI Fence Detector</title>
     <link rel="icon" type="image/x-icon" href="./ninja_logo.png">
     <link rel="shortcut icon" type="image/x-icon" href="./ninja_logo.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -182,34 +182,6 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        .badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(15px);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 24px;
-            font-size: 0.75em;
-            font-weight: 700;
-            margin-left: 16px;
-            border: 1.5px solid rgba(255,255,255,0.4);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-            animation: badgePulse 2s ease-in-out infinite;
-        }
-
-        .badge:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.05);
-        }
-
-        @keyframes badgePulse {
-            0%, 100% { box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-            50% { box-shadow: 0 4px 25px rgba(255,255,255,0.4); }
         }
 
         .main-content {
@@ -711,11 +683,6 @@
                 margin-bottom: 20px;
             }
 
-            .bedge {
-                font-size: 1.5em;
-                margin-top: 20px;
-            }
-
             .subtitle {
                 font-size: 1.25em;
             }
@@ -736,8 +703,8 @@
 </head>
 <body>
     <div class="header">
-        <h1><img src="ninja_logo_light.png.webp" alt="Ninja Fence Staining Logo" class="logo">Ninja Fence Detector <span class="badge">UNet++</span></h1>
-        <p class="subtitle"><i class="bi bi-robot"></i> AI-Powered Fence Detection & Recoloring with UNet++ Deep Learning</p>
+        <h1><img src="ninja_logo_light.png.webp" alt="Ninja Fence Staining Logo" class="logo">Ninja Fence Detector</h1>
+        <p class="subtitle"><i class="bi bi-robot"></i> AI-Powered Fence Detection & Recoloring</p>
     </div>
 
     <div class="main-content">
@@ -755,7 +722,7 @@
 
         <!-- Status -->
         <div class="loader" id="loader"></div>
-        <div class="status" id="status">Initializing UNet++ model...</div>
+        <div class="status" id="status">Initializing model...</div>
 
         <!-- Controls -->
         <div class="controls">
@@ -841,16 +808,6 @@
                 <li>Download your recolored image</li>
             </ul>
         </div>
-
-        <div class="info-box" style="background: #fff3e0; border-left-color: #f57c00;">
-            <h4 style="color: #f57c00;"><i class="bi bi-cpu"></i> Model Details</h4>
-            <ul>
-                <li>UNet++ architecture with deep supervision</li>
-                <li>ONNX Runtime for fast browser inference</li>
-                <li>Client-side processing (privacy-friendly)</li>
-                <li>Works offline after initial load</li>
-            </ul>
-        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
@@ -893,15 +850,15 @@
         // INITIALIZE
         // ============================================================================
         async function init() {
-            updateStatus('Loading UNet++ model...', 'loading');
+            updateStatus('Loading model...', 'loading');
             loader.classList.add('active');
             
             try {
                 session = await ort.InferenceSession.create(CONFIG.MODEL_PATH);
-                updateStatus('✅ UNet++ model loaded successfully!', 'success');
-                console.log('UNet++ model loaded:', session);
+                updateStatus(' Model loaded successfully!', 'success');
+                console.log('Model loaded:', session);
             } catch (error) {
-                updateStatus('❌ Failed to load UNet++ model: ' + error.message, 'error');
+                updateStatus(' Failed to load model: ' + error.message, 'error');
                 console.error('Model loading error:', error);
             } finally {
                 loader.classList.remove('active');
@@ -970,7 +927,7 @@
         
         function handleImageFile(file) {
             if (file.size > 10 * 1024 * 1024) {
-                updateStatus('✗ File too large! Max 10MB', 'error');
+                updateStatus('File too large! Max 10MB', 'error');
                 return;
             }
             
@@ -981,7 +938,7 @@
                     originalImage = img;
                     drawOriginalImage();
                     detectBtn.disabled = false;
-                    updateStatus('✓ Image loaded! Click "Detect Fence" to analyze.', 'success');
+                    updateStatus('Image loaded! Click "Detect Fence" to analyze.', 'success');
                 };
                 img.src = e.target.result;
             };
@@ -1026,7 +983,7 @@
         async function detectFence() {
             if (!originalImage || !session) return;
             
-            updateStatus('🔍 UNet++ detecting fence...', 'loading');
+            updateStatus('detecting fence...', 'loading');
             loader.classList.add('active');
             detectBtn.disabled = true;
             
@@ -1048,11 +1005,11 @@
                 maskData = postprocessMask(output, originalImage.width, originalImage.height, smoothingKernel, thresholdValue);
                 drawMask(maskData);
                 
-                updateStatus('✅ Fence detected successfully!', 'success');
+                updateStatus('Fence detected successfully!', 'success');
                 recolorBtn.disabled = false;
             } catch (error) {
                 console.error('Detection error:', error);
-                updateStatus('❌ Detection failed: ' + error.message, 'error');
+                updateStatus('Detection failed: ' + error.message, 'error');
             } finally {
                 loader.classList.remove('active');
                 detectBtn.disabled = false;
@@ -1357,7 +1314,7 @@
         function recolorFence() {
             if (!originalImage || !maskData) return;
             
-            updateStatus('🎨 Recoloring fence...', 'loading');
+            updateStatus('Recoloring fence...', 'loading');
             
             resultCanvas.width = originalImage.width;
             resultCanvas.height = originalImage.height;
@@ -1392,7 +1349,7 @@
             
             ctx.putImageData(imageData, 0, 0);
             downloadBtn.disabled = false;
-            updateStatus('✅ Recoloring complete!', 'success');
+            updateStatus('Recoloring complete!', 'success');
         }
 
         function applyBlendMode(r, g, b, cr, cg, cb, mode) {
@@ -1436,10 +1393,10 @@
         // ============================================================================
         function downloadResult() {
             const link = document.createElement('a');
-            link.download = 'fence_recolored_unet.png';
+            link.download = 'fence_stained.png';
             link.href = resultCanvas.toDataURL();
             link.click();
-            updateStatus('✅ Downloaded!', 'success');
+            updateStatus('Downloaded!', 'success');
         }
 
         function reset() {
@@ -1452,7 +1409,7 @@
             recolorBtn.disabled = true;
             downloadBtn.disabled = true;
             fileInput.value = '';
-            updateStatus(session ? 'Ready! Upload an image to begin.' : '❌ Model not loaded', session ? 'success' : 'error');
+            updateStatus(session ? 'Ready! Upload an image to begin.' : 'Model not loaded', session ? 'success' : 'error');
         }
 
         function updateStatus(message, type = '') {
