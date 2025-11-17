@@ -977,7 +977,7 @@
             <button class="action-btn btn-download" id="download-btn" disabled>
                 <i class="bi bi-download"></i> Download Result
             </button>
-            <button class="action-btn btn-reset" id="reset-btn">
+            <button class="action-btn btn-reset" id="reset-btn" disabled>
                 <i class="bi bi-arrow-clockwise"></i> Reset
             </button>
         </div>
@@ -1259,6 +1259,7 @@
                     originalImage = img;
                     drawOriginalImage();
                     detectBtn.disabled = false;
+                    resetBtn.disabled = false;
                     updateStatus('Image loaded! Click "Detect Fence" to analyze.', 'success');
                 };
                 img.src = e.target.result;
@@ -1773,6 +1774,7 @@
                 detectBtn.disabled = true;
                 recolorBtn.disabled = true;
                 downloadBtn.disabled = true;
+                resetBtn.disabled = true;
                 fileInput.value = '';
                 updateStatus(session ? 'Ready! Upload an image to begin.' : 'Model not loaded', session ? 'success' : 'error');
             } finally {
