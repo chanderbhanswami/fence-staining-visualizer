@@ -1,4 +1,4 @@
-# Ninja Fence Staining - AI-Powered Fence Detection & Recoloring
+# Ninja Fence Staining Visualizer - AI-Powered Fence Detection & Recoloring
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-success)](https://chanderbhanswami.github.io/fence-staining-visualizer/)

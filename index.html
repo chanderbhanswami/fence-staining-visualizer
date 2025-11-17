@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ninja Fence Staining - AI Fence Detector</title>
+    <title>Ninja Fence Staining - AI Fence Visualizer</title>
     <link rel="icon" type="image/x-icon" href="./ninja_logo.png">
     <link rel="shortcut icon" type="image/x-icon" href="./ninja_logo.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -602,6 +602,47 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-spinner {
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            border-top: 6px solid #C06B1A;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .loading-text {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
         .info-box {
             background: linear-gradient(135deg, rgba(192, 107, 26, 0.05) 0%, rgba(0, 0, 0, 0.05) 100%);
             border-left: 4px solid var(--primary);
@@ -684,7 +725,7 @@
             }
 
             .subtitle {
-                font-size: 1.25em;
+                font-size: 1em;
             }
 
             .logo {
@@ -702,8 +743,16 @@
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loading-text">Processing...</div>
+        </div>
+    </div>
+
     <div class="header">
-        <h1><img src="ninja_logo_light.png.webp" alt="Ninja Fence Staining Logo" class="logo">Ninja Fence Detector</h1>
+        <h1><img src="ninja_logo_light.png.webp" alt="Ninja Fence Staining Logo" class="logo">Ninja Fence Visualizer</h1>
         <p class="subtitle"><i class="bi bi-robot"></i> AI-Powered Fence Detection & Recoloring</p>
     </div>
 
@@ -801,7 +850,7 @@
         <div class="info-box">
             <h4><i class="bi bi-list-check"></i> How to Use</h4>
             <ul>
-                <li>Upload a photo of a fence (JPG, PNG)</li>
+                <li>Upload a photo of a fence (JPG, PNG, WEBP)</li>
                 <li>Click "Detect Fence" to run AI detection</li>
                 <li>Choose your desired fence color</li>
                 <li>Click "Recolor Fence" to apply the new color</li>
@@ -840,11 +889,23 @@
         const edgeSmoothing = document.getElementById('edge-smoothing');
         const status = document.getElementById('status');
         const loader = document.getElementById('loader');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
         
         const detectBtn = document.getElementById('detect-btn');
         const recolorBtn = document.getElementById('recolor-btn');
         const downloadBtn = document.getElementById('download-btn');
         const resetBtn = document.getElementById('reset-btn');
+
+        // Helper functions for loading overlay
+        function showLoading(message) {
+            loadingText.textContent = message;
+            loadingOverlay.classList.add('active');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+        }
 
         // ============================================================================
         // INITIALIZE
@@ -854,12 +915,30 @@
             loader.classList.add('active');
             
             try {
-                session = await ort.InferenceSession.create(CONFIG.MODEL_PATH);
+                // Suppress ONNX Runtime warnings
+                ort.env.logLevel = 'error';
+                
+                // Configure WASM paths and settings for better Safari compatibility
+                ort.env.wasm.numThreads = 1; // Single thread for better Safari compatibility
+                ort.env.wasm.simd = false; // Disable SIMD for older Safari versions
+                
+                // Set execution providers with fallback order
+                const sessionOptions = {
+                    executionProviders: ['wasm'],
+                    graphOptimizationLevel: 'basic'
+                };
+                
+                session = await ort.InferenceSession.create(CONFIG.MODEL_PATH, sessionOptions);
                 updateStatus(' Model loaded successfully!', 'success');
                 console.log('Model loaded:', session);
             } catch (error) {
                 updateStatus(' Failed to load model: ' + error.message, 'error');
                 console.error('Model loading error:', error);
+                
+                // Show user-friendly error for Safari
+                if (error.message.includes('Out of memory') || error.message.includes('no available backend')) {
+                    updateStatus(' Safari compatibility issue detected. Please try using Chrome or reduce image size.', 'error');
+                }
             } finally {
                 loader.classList.remove('active');
             }
@@ -983,11 +1062,14 @@
         async function detectFence() {
             if (!originalImage || !session) return;
             
-            updateStatus('detecting fence...', 'loading');
-            loader.classList.add('active');
+            showLoading('Detecting fence...');
+            updateStatus('Detecting fence...', 'loading');
             detectBtn.disabled = true;
             
             try {
+                // Use setTimeout to allow UI to update
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
                 const tensor = preprocessImage(originalImage);
                 
                 // UNet++ model input name
@@ -1011,7 +1093,7 @@
                 console.error('Detection error:', error);
                 updateStatus('Detection failed: ' + error.message, 'error');
             } finally {
-                loader.classList.remove('active');
+                hideLoading();
                 detectBtn.disabled = false;
             }
         }
@@ -1311,45 +1393,53 @@
         // ============================================================================
         // FENCE RECOLORING
         // ============================================================================
-        function recolorFence() {
+        async function recolorFence() {
             if (!originalImage || !maskData) return;
             
+            showLoading('Recoloring fence...');
             updateStatus('Recoloring fence...', 'loading');
             
-            resultCanvas.width = originalImage.width;
-            resultCanvas.height = originalImage.height;
-            const ctx = resultCanvas.getContext('2d');
-            
-            ctx.drawImage(originalImage, 0, 0);
-            const imageData = ctx.getImageData(0, 0, originalImage.width, originalImage.height);
-            const data = imageData.data;
-            
-            const rgb = hexToRgb(colorPicker.value);
-            const alpha = parseInt(opacity.value) / 100;
-            const mode = blendMode.value;
-            
-            for (let i = 0; i < maskData.length; i++) {
-                if (maskData[i] > 0.1) {  // Lower threshold since mask is already filtered
-                    const idx = i * 4;
-                    const r = data[idx];
-                    const g = data[idx + 1];
-                    const b = data[idx + 2];
+            try {
+                // Use setTimeout to allow UI to update
+                await new Promise(resolve => setTimeout(resolve, 50));
+                
+                resultCanvas.width = originalImage.width;
+                resultCanvas.height = originalImage.height;
+                const ctx = resultCanvas.getContext('2d');
+                
+                ctx.drawImage(originalImage, 0, 0);
+                const imageData = ctx.getImageData(0, 0, originalImage.width, originalImage.height);
+                const data = imageData.data;
+                
+                const rgb = hexToRgb(colorPicker.value);
+                const alpha = parseInt(opacity.value) / 100;
+                const mode = blendMode.value;
+                
+                for (let i = 0; i < maskData.length; i++) {
+                    if (maskData[i] > 0.1) {  // Lower threshold since mask is already filtered
+                        const idx = i * 4;
+                        const r = data[idx];
+                        const g = data[idx + 1];
+                        const b = data[idx + 2];
 
-                    const blended = applyBlendMode(r, g, b, rgb.r, rgb.g, rgb.b, mode);
-                    
-                    // Use mask value as alpha multiplier for smooth edges
-                    const maskAlpha = Math.min(1, maskData[i] * 2);
-                    const finalAlpha = alpha * maskAlpha;
+                        const blended = applyBlendMode(r, g, b, rgb.r, rgb.g, rgb.b, mode);
+                        
+                        // Use mask value as alpha multiplier for smooth edges
+                        const maskAlpha = Math.min(1, maskData[i] * 2);
+                        const finalAlpha = alpha * maskAlpha;
 
-                    data[idx] = r + (blended.r - r) * finalAlpha;
-                    data[idx + 1] = g + (blended.g - g) * finalAlpha;
-                    data[idx + 2] = b + (blended.b - b) * finalAlpha;
+                        data[idx] = r + (blended.r - r) * finalAlpha;
+                        data[idx + 1] = g + (blended.g - g) * finalAlpha;
+                        data[idx + 2] = b + (blended.b - b) * finalAlpha;
+                    }
                 }
+                
+                ctx.putImageData(imageData, 0, 0);
+                downloadBtn.disabled = false;
+                updateStatus('Recoloring complete!', 'success');
+            } finally {
+                hideLoading();
             }
-            
-            ctx.putImageData(imageData, 0, 0);
-            downloadBtn.disabled = false;
-            updateStatus('Recoloring complete!', 'success');
         }
 
         function applyBlendMode(r, g, b, cr, cg, cb, mode) {
@@ -1391,25 +1481,61 @@
         // ============================================================================
         // DOWNLOAD & RESET
         // ============================================================================
-        function downloadResult() {
-            const link = document.createElement('a');
-            link.download = 'fence_stained.png';
-            link.href = resultCanvas.toDataURL();
-            link.click();
-            updateStatus('Downloaded!', 'success');
+        async function downloadResult() {
+            showLoading('Preparing download...');
+            
+            try {
+                await new Promise(resolve => setTimeout(resolve, 300));
+                const link = document.createElement('a');
+                link.download = 'fence_stained.png';
+                link.href = resultCanvas.toDataURL();
+                link.click();
+                updateStatus('Downloaded!', 'success');
+            } finally {
+                hideLoading();
+            }
         }
 
-        function reset() {
-            originalImage = null;
-            maskData = null;
-            originalCanvas.width = 0;
-            maskCanvas.width = 0;
-            resultCanvas.width = 0;
-            detectBtn.disabled = true;
-            recolorBtn.disabled = true;
-            downloadBtn.disabled = true;
-            fileInput.value = '';
-            updateStatus(session ? 'Ready! Upload an image to begin.' : 'Model not loaded', session ? 'success' : 'error');
+        async function reset() {
+            showLoading('Resetting...');
+            
+            try {
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                originalImage = null;
+                maskData = null;
+                
+                // Properly reset canvases to default empty state
+                const ctx1 = originalCanvas.getContext('2d');
+                const ctx2 = maskCanvas.getContext('2d');
+                const ctx3 = resultCanvas.getContext('2d');
+                
+                // Clear any existing content
+                ctx1.clearRect(0, 0, originalCanvas.width, originalCanvas.height);
+                ctx2.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
+                ctx3.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+                
+                // Reset to default canvas size (matches initial page load)
+                originalCanvas.width = 300;
+                originalCanvas.height = 200;
+                maskCanvas.width = 300;
+                maskCanvas.height = 200;
+                resultCanvas.width = 300;
+                resultCanvas.height = 200;
+                
+                // Clear the canvases again after resizing
+                ctx1.clearRect(0, 0, originalCanvas.width, originalCanvas.height);
+                ctx2.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
+                ctx3.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+                
+                detectBtn.disabled = true;
+                recolorBtn.disabled = true;
+                downloadBtn.disabled = true;
+                fileInput.value = '';
+                updateStatus(session ? 'Ready! Upload an image to begin.' : 'Model not loaded', session ? 'success' : 'error');
+            } finally {
+                hideLoading();
+            }
         }
 
         function updateStatus(message, type = '') {
