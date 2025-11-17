@@ -18,6 +18,10 @@ This tool leverages advanced computer vision to:
 - **Realistically recolor** fences with customizable stain colors
 - **Process instantly** in the browser (client-side, privacy-friendly)
 
+## 🖥️ User Interface
+
+<img src="assets/screenshot_demo.png" width="800" alt="Web Interface">
+
 ### 🖼️ Visual Example
 
 **Input Image:**
