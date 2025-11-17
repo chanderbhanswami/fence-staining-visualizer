@@ -1,4 +1,4 @@
-# 🥷 Ninja Fence Staining - AI-Powered Fence Detection & Recoloring
+# Ninja Fence Staining - AI-Powered Fence Detection & Recoloring
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-success)](https://chanderbhanswami.github.io/fence-staining-visualizer/)
@@ -13,7 +13,7 @@ A production-ready web application that uses deep learning (UNet++ architecture)
 
 ---
 
-## 🎯 Overview
+## Overview
 
 This tool leverages advanced computer vision to:
 - **Automatically detect** fences in uploaded images
@@ -21,11 +21,11 @@ This tool leverages advanced computer vision to:
 - **Realistically recolor** fences with customizable stain colors
 - **Process instantly** in the browser (client-side, privacy-friendly)
 
-## 🖥️ User Interface
+## User Interface
 
 <img src="assets/screenshot_demo.png" width="800" alt="Web Interface">
 
-### 🖼️ Visual Example
+### Visual Example
 
 **Input Image:**
 
@@ -39,27 +39,27 @@ The AI model identifies fence structures with pixel-level precision, even handli
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🤖 AI-Powered Detection
+### AI-Powered Detection
 - **UNet++ Architecture**: State-of-the-art segmentation model with EfficientNet-B7 encoder
 - **512×512 Resolution**: High-quality detection with fine edge details
 - **ONNX Runtime**: Optimized browser inference (fast, efficient)
 - **Deep Supervision**: Multi-level feature fusion for accurate boundaries
 
-### 🎨 Advanced Recoloring
+### Advanced Recoloring
 - **Multiple Blend Modes**: Multiply, Overlay, Screen, Normal
 - **Adjustable Opacity**: 0-100% for subtle to dramatic effects
 - **Edge Smoothing**: 5 levels (None to Maximum) for natural transitions
 - **Real-time Preview**: Instant visual feedback
 
-### 🔧 Professional Controls
+### Professional Controls
 - **Detection Threshold**: Fine-tune sensitivity (0.1-0.9)
 - **Color Picker**: Unlimited stain color options
 - **High-Quality Output**: Download results in PNG format
 - **Responsive Design**: Works on desktop, tablet, and mobile
 
-### 🔒 Privacy & Performance
+### Privacy & Performance
 - **100% Client-Side**: No server uploads, all processing in-browser
 - **Offline Capable**: Works after initial model load
 - **No Data Collection**: Your images never leave your device
@@ -67,9 +67,9 @@ The AI model identifies fence structures with pixel-level precision, even handli
 
 ---
 
-## 🚀 Live Demo
+## Live Demo
 
-**Try it now:** [Open Live Demo](https://chanderbhanswami.github.io/fence-staining-visualizer/)
+**Try it now:** [Open Live Demo](https://technotaau.github.io/fence-staining-visualizer/)
 
 Simply:
 1. Upload a fence photo (JPG/PNG, max 10MB)
@@ -80,7 +80,7 @@ Simply:
 
 ---
 
-## 🛠️ How It Works
+## How It Works
 
 ### 1. **Image Upload**
 User uploads a fence photo via drag-and-drop or file picker.
@@ -121,7 +121,7 @@ High-quality recolored image ready for download.
 
 ---
 
-## 📊 Model Training
+## Model Training
 
 The UNet++ model was trained using:
 
@@ -135,7 +135,7 @@ The UNet++ model was trained using:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 fence-staining-visualizer/
@@ -155,14 +155,14 @@ fence-staining-visualizer/
 
 ---
 
-## 🖥️ Browser Compatibility
+## Browser Compatibility
 
 | Browser | Minimum Version | Notes |
 |---------|----------------|-------|
-| Chrome | 90+ | ✅ Full support, GPU acceleration |
-| Firefox | 88+ | ✅ Full support |
-| Safari | 14+ | ✅ Full support (macOS/iOS) |
-| Edge | 90+ | ✅ Full support, GPU acceleration |
+| Chrome | 90+ | Full support, GPU acceleration |
+| Firefox | 88+ | Full support |
+| Safari | 14+ | Full support (macOS/iOS) |
+| Edge | 90+ | Full support, GPU acceleration |
 
 **Requirements**:
 - JavaScript enabled
@@ -180,32 +180,32 @@ fence-staining-visualizer/
 
 ---
 
-## 🛡️ Privacy & Security
+## Privacy & Security
 
 This application is designed with privacy as a priority:
 
-- ✅ **No Server Communication**: All processing happens in your browser
-- ✅ **No Data Storage**: Images are never saved or cached
-- ✅ **No Analytics**: No tracking or user behavior monitoring
-- ✅ **Open Source**: Fully auditable code
-- ✅ **Offline Capable**: Works without internet (after model loads)
+-  **No Server Communication**: All processing happens in your browser
+-  **No Data Storage**: Images are never saved or cached
+-  **No Analytics**: No tracking or user behavior monitoring
+-  **Open Source**: Fully auditable code
+-  **Offline Capable**: Works without internet (after model loads)
 
 ---
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 📞 Support
+## Support
 
-- **Issues**: [GitHub Issues](https://github.com/chanderbhanswami/fence-staining-visualizer/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/chanderbhanswami/fence-staining-visualizer/discussions)
+- **Issues**: [GitHub Issues](https://github.com/technotaau/fence-staining-visualizer/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/technotaau/fence-staining-visualizer/discussions)
 - **Email**: send@technotaau.com
 
 ---
 
-**Built with ❤️ by TechnoTaau Team | Powered by UNet++ & ONNX Runtime**
+**Built by TechnoTaau Team | Powered by UNet++ & ONNX Runtime**
 
-⭐ **Star this repo if you find it useful!** ⭐
+**Star this repo if you find it useful!**
