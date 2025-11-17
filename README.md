@@ -25,7 +25,7 @@ This tool leverages advanced computer vision to:
 
 <img src="assets/screenshot_demo.png" width="800" alt="Web Interface">
 
-### Visual Example
+## Visual Example
 
 **Input Image:**
 
