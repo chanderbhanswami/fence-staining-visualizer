@@ -228,6 +228,8 @@ fence-staining-visualizer/
 ├── fence_model_unet_browser.onnx  # Trained UNet++ model
 ├── ninja_logo_light.png.webp   # Logo (light version)
 ├── ninja_logo.png              # Logo (dark version)
+├── .gitignore                  # gitignore file
+├── LICENSE                     # MIT License
 │
 ├── assets/                     # Demo images for README
 │   ├── fence_sample_1.jpg
